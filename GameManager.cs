@@ -399,7 +399,7 @@ namespace TextRPG_Spartan
                     }
                     else if(player.TotalGold >= itembuy.Gold)
                     {
-                        player.DecreaseGold(itembuy.Gold);
+                        player.Buy_Item(itembuy.Gold);
                         player.Inventory.AddItem(targetID);
                         /*shop.BuyItem(targetID); */// 아예 사라져 버린다. 남아있고 구매한 제품이면 구매했다고 알수있게
 
@@ -506,7 +506,7 @@ namespace TextRPG_Spartan
                     case "1":
                         if(player.TotalGold >= 500)
                         {
-                            player.DecreaseGold(500);
+                            player.Buy_Item(500);
                             player.HealHP(30);
                         }
                         else

@@ -37,7 +37,6 @@ namespace TextRPG_Spartan
         {
             Inventory = new MyInventory();
             equipment = new Equipment(this);
-            shop = new Shop();
         }
 
         public void PlayerSet(string name)
@@ -50,7 +49,7 @@ namespace TextRPG_Spartan
             TotalDefend = BaseDefend;
         }
 
-        public void DecreaseGold(int itemGold)
+        public void Buy_Item(int itemGold)
         {
             TotalGold -= itemGold;
         }
