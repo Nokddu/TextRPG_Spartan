@@ -37,17 +37,5 @@ namespace TextRPG_Spartan
         {
             InventoryID.Remove(itemid);
         }
-
-        public int GetItemID(int input)
-        {
-            if(input > 0 && input <= InventoryID.Count  )
-            {
-                return InventoryID[input-1];
-            }
-            else
-            {
-                return -1;
-            }    
-        }
     }
 }

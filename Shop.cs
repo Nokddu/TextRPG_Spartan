@@ -25,16 +25,5 @@ namespace TextRPG_Spartan
         {
             return new List<int>(this.Sellitems);
         }
-
-
-        public bool SearchItem(int itemid)
-        {
-            return Sellitems.Contains(itemid);
-        }
-
-        public void BuyItem(int itemid)
-        {
-            Sellitems.Remove(itemid);
-        }
     }
 }
