@@ -297,9 +297,13 @@ namespace TextRPG_Spartan
             }
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write("1.");
+            Console.Write("1. ");
             Console.ResetColor();
-            Console.WriteLine(" 아이템 구매");
+            Console.WriteLine("아이템 구매");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("2.");
+            Console.ResetColor();
+            Console.WriteLine(" 아이템 판매");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Write("0.");
             Console.ResetColor();
@@ -318,6 +322,13 @@ namespace TextRPG_Spartan
                         return _State.main;
                     case "1":
                         return _State.buyshop;
+                    case "2":
+                        return _State.sellshop;
+                    case "99":
+                        player.Inventory.AddItem(119);
+                        Console.WriteLine("무언가 알수 없는 힘이 나를 이끌었다. 그리고 무언가를 얻었다..\n 그리고 잠시 정신을 잃었다...");
+                        Thread.Sleep(5000); // 이거 만든 이유는 추가 임무에 내 무기 추가 있어서 해본겁니다..
+                        return _State.main;
                     default:
                         Console.WriteLine("잘못된 입력입니다");
                         break;
@@ -334,7 +345,7 @@ namespace TextRPG_Spartan
             Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.");
             Console.WriteLine();
             Console.WriteLine("[보유 골드]");
-            Console.WriteLine($"{player.TotalGold}\n\n");
+            Console.WriteLine($"{player.TotalGold}G\n\n");
             Console.WriteLine("아이템 목록");
             // 아이템 목록 보여주는 코드 foreach면 될거같은데.
             //리스트 참조형 변수
@@ -361,7 +372,7 @@ namespace TextRPG_Spartan
             Console.WriteLine(" 나가기");
             while (true)
             {
-                Console.WriteLine("\n장착하고 싶은 아이템의 번호를 적어주세요.");
+                Console.WriteLine("\n구매하고 싶은 아이템의 번호를 입력해주세요.");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write(">>");
                 string Select = Console.ReadLine();
@@ -372,7 +383,7 @@ namespace TextRPG_Spartan
                     continue;
                 }
 
-                if (convert == 0)
+                if(convert == 0)
                 {
                     return _State.shop;
                 }
@@ -394,14 +405,75 @@ namespace TextRPG_Spartan
 
                         Console.WriteLine($"{itembuy.Name}을 구매하셨습니다");
                     }
-                    else
-                    {
-
-                    }
                 }
 
                 Thread.Sleep(500);
                 return _State.buyshop;
+            }
+        }
+
+        public _State SellShop()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("상점");
+            Console.ResetColor();
+            Console.WriteLine("판매할 아이템을 선택해주세요.");
+            Console.WriteLine();
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{player.TotalGold}G\n\n");
+            Console.WriteLine("아이템 목록");
+            // 아이템 목록 보여주는 코드 foreach면 될거같은데.
+            //리스트 참조형 변수
+            List<int> itemsell = player.Inventory.GetItemIDs();
+            //foreach로 아이템목록 추가
+            int count = 1;
+            foreach (var itemId in itemsell)
+            {
+                Items item = ItemDataBase.GetID(itemId);
+                if (player.Inventory.HasItem(itemId))
+                {
+                    Console.WriteLine($"-{count}. {item.Name}     | 방어력 {item.Defend} | {item.Description}          |  {(item.Gold * 85) / 100 }G");
+                }
+                count++;
+            }
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write("0.");
+            Console.ResetColor();
+            Console.WriteLine(" 나가기");
+            while (true)
+            {
+                Console.WriteLine("\n판매하고 싶은 아이템의 번호를 적어주세요.");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(">>");
+                string Select = Console.ReadLine();
+                Console.ResetColor();
+                if (!int.TryParse(Select, out int convert))
+                {
+                    Console.WriteLine("숫자를 입력해주세요");
+                    continue;
+                }
+
+                if (convert == 0)
+                {
+                    return _State.shop;
+                }
+
+                if (convert > 0 && convert <= itemsell.Count)
+                {
+                    int targetID = itemsell[convert - 1];
+
+                    if (player.Inventory.HasItem(targetID))
+                    {
+                        player.equipment.UnEquipItem(targetID);
+                        player.Sell_Item(targetID);
+                        player.Inventory.DeleteItem(targetID);
+                    }
+                }
+
+                Thread.Sleep(500);
+                return _State.sellshop;
             }
         }
 
@@ -425,7 +497,6 @@ namespace TextRPG_Spartan
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write(">>");
                 string Select = Console.ReadLine();
-
                 Console.ResetColor();
 
                 switch (Select)
@@ -433,9 +504,17 @@ namespace TextRPG_Spartan
                     case "0":
                         return _State.main;
                     case "1":
+                        if(player.TotalGold >= 500)
+                        {
+                            player.DecreaseGold(500);
+                            player.HealHP(30);
+                        }
+                        else
+                        {
+                            Console.WriteLine("돈이 부족합니다");
+                            break;
+                        }
                         Console.Clear();
-                        player.DecreaseGold(500);
-                        player.HealHP(30);
                         Thread.Sleep(1000);
                         Console.WriteLine("휴식중.");
                         Thread.Sleep(1000);
@@ -451,6 +530,44 @@ namespace TextRPG_Spartan
                         Console.Clear();
                         Console.WriteLine("회복이 완료되었습니다! 나가시려면 아무키나 눌러주세요");
                         Console.ReadKey();
+                        return _State.main;
+                    case "99":
+                        player.Inventory.AddItem(219);
+                        Console.WriteLine("잠시 쉬고 있을때 옆을 돌아보니 이상한 검이 꽂혀있었다.");
+                        Console.WriteLine($"{player.Name}(은)는 검에 손을 가져다 댄다..");
+                        Console.WriteLine("검에서 이상한 소리가 들린다..");
+                        Thread.Sleep(2000);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("§");
+                        Thread.Sleep(500);
+                        Console.Write("내");
+                        Thread.Sleep(500);
+                        Console.Write(" ");
+                        Thread.Sleep(500);
+                        Console.Write("▦");
+                        Thread.Sleep(500);
+                        Console.Write("을 ");
+                        Thread.Sleep(500);
+                        Console.Write("＆");
+                        Thread.Sleep(500);
+                        Console.Write("아");                             // 이거 만든 이유는 추가 임무에 내 무기 추가 있어서 해본겁니다..
+                        Thread.Sleep(500);
+                        Console.Write("들");
+                        Thread.Sleep(500);
+                        Console.Write("▨");
+                        Thread.Sleep(500);
+                        Console.Write("라");
+                        Thread.Sleep(500);
+                        Console.Write(".");
+                        Thread.Sleep(500);
+                        Console.Write(".");
+                        Thread.Sleep(500);
+                        Console.Write(".");
+                        Thread.Sleep(500);
+                        Console.Write("§");
+                        Console.ResetColor();
+                        Console.WriteLine("\n그 검의 엄청난 힘에 잠시 정신을 잃었다...");
+                        Thread.Sleep(3000);
                         return _State.main;
                     default:
                         Console.WriteLine("잘못된 입력입니다");

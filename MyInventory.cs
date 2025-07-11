@@ -32,6 +32,12 @@ namespace TextRPG_Spartan
             InventoryID.Add(itemid);
         }
 
+        // 얘를 나중에
+        public void DeleteItem(int itemid)
+        {
+            InventoryID.Remove(itemid);
+        }
+
         public int GetItemID(int input)
         {
             if(input > 0 && input <= InventoryID.Count  )

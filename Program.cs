@@ -14,6 +14,7 @@ namespace TextRPG_Spartan
         inventory,
         shop,
         buyshop,
+        sellshop,
         equipment,
         Rest,
         exit
@@ -51,6 +52,9 @@ namespace TextRPG_Spartan
                         break;
                     case _State.buyshop:
                         currentState = gameManager.BuyShop();
+                        break;
+                    case _State.sellshop:
+                        currentState = gameManager.SellShop();
                         break;
                     case _State.Rest:
                         currentState = gameManager.RestPage();

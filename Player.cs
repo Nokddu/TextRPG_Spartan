@@ -55,6 +55,13 @@ namespace TextRPG_Spartan
             TotalGold -= itemGold;
         }
 
+        // 얘를 먼저 해야됨
+        public void Sell_Item(int itemid)
+        {
+            Items item = ItemDataBase.GetID(itemid);
+            TotalGold += (item.Gold * 85) / 100;
+        }
+
         // 현재 장착 하고 해제 할 경우 아래가 실행이 된다.
         public void UpdateStats()
         {
